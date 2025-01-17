@@ -133,22 +133,3 @@ IF %errorlevel% NEQ 0 (
   echo Can't configure TON
   exit /b %errorlevel%
 )
-
-IF "%1"=="-t" (
-contest-grader
-IF %errorlevel% NEQ 0 (
-  echo Can't compile TON
-  exit /b %errorlevel%
-)
-)
-
-echo Strip and copy artifacts
-cd ..
-echo where strip
-where strip
-mkdir artifacts
-
-for %%I in (build\contest\grader\contest-grader.exe) do (
-    echo strip -s %%I & copy %%I artifacts\
-    strip -s %%I & copy %%I artifacts\
-)
