@@ -109,7 +109,7 @@ echo Current dir %cd%
 
 mkdir build
 cd build
-cmake -GNinja  -DCMAKE_BUILD_TYPE=Release ^
+cmake -GNinja  -DCMAKE_BUILD_TYPE=Debug ^
 -DPORTABLE=1 ^
 -DSODIUM_USE_STATIC_LIBS=1 ^
 -DSODIUM_LIBRARY_RELEASE=%third_libs%\libsodium\Build\Release\x64\libsodium.lib ^
@@ -135,40 +135,11 @@ IF %errorlevel% NEQ 0 (
 )
 
 IF "%1"=="-t" (
-ninja storage-daemon storage-daemon-cli blockchain-explorer fift func tolk tonlib tonlibjson  ^
-tonlib-cli validator-engine lite-client pow-miner validator-engine-console generate-random-id ^
-json2tlo dht-server http-proxy rldp-http-proxy adnl-proxy create-state create-hardfork emulator ^
-test-ed25519 test-ed25519-crypto test-bigint test-vm test-fift test-cells test-smartcont test-net ^
-test-tdactor test-tdutils test-tonlib-offline test-adnl test-dht test-rldp test-rldp2 test-catchain ^
-test-fec test-tddb test-db test-validator-session-state test-emulator proxy-liteserver
+grader
 IF %errorlevel% NEQ 0 (
   echo Can't compile TON
   exit /b %errorlevel%
 )
-) else (
-ninja storage-daemon storage-daemon-cli blockchain-explorer fift func tolk tonlib tonlibjson  ^
-tonlib-cli validator-engine lite-client pow-miner validator-engine-console generate-random-id ^
-json2tlo dht-server http-proxy rldp-http-proxy adnl-proxy create-state create-hardfork emulator proxy-liteserver
-IF %errorlevel% NEQ 0 (
-  echo Can't compile TON
-  exit /b %errorlevel%
-)
-)
-
-copy validator-engine\validator-engine.exe test
-IF %errorlevel% NEQ 0 (
-  echo validator-engine.exe does not exist
-  exit /b %errorlevel%
-)
-
-IF "%1"=="-t" (
-  echo Running tests...
-REM  ctest -C Release --output-on-failure -E "test-catchain|test-actors|test-validator-session-state"
-  ctest -C Release --output-on-failure -E "test-bigint" --timeout 1800
-  IF %errorlevel% NEQ 0 (
-    echo Some tests failed
-    exit /b %errorlevel%
-  )
 )
 
 echo Strip and copy artifacts
@@ -176,33 +147,8 @@ cd ..
 echo where strip
 where strip
 mkdir artifacts
-mkdir artifacts\smartcont
-mkdir artifacts\lib
 
-for %%I in (build\storage\storage-daemon\storage-daemon.exe ^
-  build\storage\storage-daemon\storage-daemon-cli.exe ^
-  build\blockchain-explorer\blockchain-explorer.exe ^
-  build\crypto\fift.exe ^
-  build\crypto\tlbc.exe ^
-  build\crypto\func.exe ^
-  build\tolk\tolk.exe ^
-  build\crypto\create-state.exe ^
-  build\validator-engine-console\validator-engine-console.exe ^
-  build\tonlib\tonlib-cli.exe ^
-  build\tonlib\tonlibjson.dll ^
-  build\http\http-proxy.exe ^
-  build\rldp-http-proxy\rldp-http-proxy.exe ^
-  build\dht-server\dht-server.exe ^
-  build\lite-client\lite-client.exe ^
-  build\validator-engine\validator-engine.exe ^
-  build\utils\generate-random-id.exe ^
-  build\utils\json2tlo.exe ^
-  build\utils\proxy-liteserver.exe ^
-  build\adnl\adnl-proxy.exe ^
-  build\emulator\emulator.dll) do (
+for %%I in (build\contest\grader\grader.exe) do (
     echo strip -s %%I & copy %%I artifacts\
     strip -s %%I & copy %%I artifacts\
 )
-
-xcopy /e /k /h /i crypto\smartcont artifacts\smartcont
-xcopy /e /k /h /i crypto\fift\lib artifacts\lib
