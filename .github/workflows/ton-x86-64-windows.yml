@@ -30,7 +30,8 @@ jobs:
           build-windows-github-2019.bat Enterprise
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         with:
-          name: ton-win-binaries
-          path: artifacts
+           name: ton-win-binaries
+           path: build\contest\grader
+
