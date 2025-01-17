@@ -33,5 +33,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
            name: ton-win-binaries
-           path: build\contest\grader
+           path: build
 
