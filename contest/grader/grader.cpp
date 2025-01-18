@@ -154,7 +154,7 @@ class ContestGrader : public td::actor::Actor {
   }
 
   td::Result<tl_object_ptr<ton_api::contest_test>> read_test_file() {
-    TRY_RESULT(data, td::read_file(tests_dir_ + "/" + test_files_[test_idx_]));
+    TRY_RESULT(data, td::read_file(tests_dir_ + TD_DIR_SLASH + test_files_[test_idx_]));
     return ton::fetch_tl_object<ton_api::contest_test>(data, true);
   }
 
@@ -263,9 +263,9 @@ int main(int argc, char* argv[]) {
     std::cout << sb.as_cslice().c_str();
     std::exit(2);
   });
-  std::string tests_dir = "tests/";
-  p.add_option('d', "tests", "directory with tests (default: tests/)",
-               [&](td::Slice arg) { tests_dir = arg.str() + "/"; });
+  std::string tests_dir = "tests" + TD_DIR_SLASH;
+  p.add_option('d', "tests", "directory with tests (default: tests)",
+               [&](td::Slice arg) { tests_dir = arg.str() + TD_DIR_SLASH; });
   td::uint32 threads = 8;
   p.add_checked_option('t', "threads", "number of threads (default: 8)", [&](td::Slice arg) {
     TRY_RESULT_ASSIGN(threads, td::to_integer_safe<td::uint32>(arg));
