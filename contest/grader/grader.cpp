@@ -20,34 +20,34 @@
 #include "vm/vm.h"
 #include "vm/cells/MerkleUpdate.h"
 
-#ifdef _WIN32
-#include <Windows.h>
-#else
+#if TD_LINUX
 #include <sys/resource.h>
+#elif TD_WINDOWS
+#include <Windows.h>
 #endif
 
 using namespace ton;
 
 static constexpr td::uint64 CPU_USAGE_PER_SEC = 1000000;
 
-#ifdef _WIN32
-static td::uint64 get_cpu_usage() {
-    FILETIME ignored_time;
-    FILETIME user_time;
-    if (!GetProcessTimes(GetCurrentProcess(), &ignored_time, &ignored_time, &ignored_time, &user_time)) {
-          ULARGE_INTEGER ut;
-          ut.LowPart = static_cast<uint64>(user_time.dwLowDateTime);
-          ut.HighPart = static_cast<uint64>(user_time.dwHighDateTime);
-          return static_cast<uint64>(ut.QuadPart / 10);
-      }
-      return 0;
-}
-#else
-static td::uint64 get_cpu_usage() {
-  rusage usage;
-  CHECK(getrusage(RUSAGE_SELF, &usage) == 0);
-  return (td::uint64)usage.ru_utime.tv_sec * 1000000 + (td::uint64)usage.ru_utime.tv_usec;
-}
+#if TD_LINUX
+  static td::uint64 get_cpu_usage() {
+    rusage usage;
+    CHECK(getrusage(RUSAGE_SELF, &usage) == 0);
+    return (td::uint64)usage.ru_utime.tv_sec * 1000000 + (td::uint64)usage.ru_utime.tv_usec;
+  }
+#elif TD_WINDOWS
+  static td::uint64 get_cpu_usage() {
+      FILETIME ignored_time;
+      FILETIME user_time;
+      if (!GetProcessTimes(GetCurrentProcess(), &ignored_time, &ignored_time, &ignored_time, &user_time)) {
+            ULARGE_INTEGER ut;
+            ut.LowPart = static_cast<uint64>(user_time.dwLowDateTime);
+            ut.HighPart = static_cast<uint64>(user_time.dwHighDateTime);
+            return static_cast<uint64>(ut.QuadPart / 10);
+        }
+        return 0;
+  }
 #endif
 
 class ContestGrader : public td::actor::Actor {
