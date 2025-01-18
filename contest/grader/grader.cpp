@@ -22,9 +22,6 @@
 
 #ifdef _WIN32
 #include <Windows.h>
-#include <stdexcept>
-#include <iostream>
-#include <cstdint>
 #else
 #include <sys/resource.h>
 #endif
