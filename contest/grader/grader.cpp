@@ -42,9 +42,9 @@ static constexpr td::uint64 CPU_USAGE_PER_SEC = 1000000;
       FILETIME user_time;
       if (!GetProcessTimes(GetCurrentProcess(), &ignored_time, &ignored_time, &ignored_time, &user_time)) {
             ULARGE_INTEGER ut;
-            ut.LowPart = static_cast<uint64>(user_time.dwLowDateTime);
-            ut.HighPart = static_cast<uint64>(user_time.dwHighDateTime);
-            return static_cast<uint64>(ut.QuadPart / 10);
+            ut.LowPart = static_cast<td::uint64>(user_time.dwLowDateTime);
+            ut.HighPart = static_cast<td::uint64>(user_time.dwHighDateTime);
+            return static_cast<td::uint64>(ut.QuadPart / 10);
         }
         return 0;
   }
